@@ -1,3 +1,4 @@
+import collection from "./collection";
 import {
   loginMode,
   userName,
@@ -8,7 +9,7 @@ import {
   blogPw
 } from "./config";
 export default async (page, browser) => {
-  await page.click(".login", { delay: 100 });
+  await page.click(".login", { delay: 50 });
   switch (loginMode) {
     case 0:
       await normalLogin(page);
@@ -23,8 +24,10 @@ export default async (page, browser) => {
       await gitLogin(page, browser);
       break;
     default:
+      await normalLogin(page);
       break;
   }
+  await collection(page, browser);
 };
 
 // 账号密码登录
@@ -33,7 +36,6 @@ const normalLogin = async page => {
   await page.type('input[name="loginPhoneOrEmail"]', userName, { delay: 1 });
   await page.type('input[name="loginPassword"]', password, { delay: 5 });
   await page.click(".auth-form .btn", { delay: 50 });
-  await page.waitFor(3000);
 };
 
 // 微博登录
@@ -46,7 +48,6 @@ const blogLogin = async (page, browser) => {
   await page2.type("input[name=userId]", blogName, { delay: 1 });
   await page2.type("input[name=passwd]", blogPw, { delay: 1 });
   await page2.click(".WB_btn_login", { delay: 50 });
-
   // await page.waitFor(5000);
 };
 
@@ -56,8 +57,7 @@ const wechatLogin = async (page, browser) => {
   await page.waitFor(3000);
   const page2 = (await browser.pages())[2];
   await page2.setViewport({ width: 800, height: 769 });
-  await page2.waitForSelector(".qrcode");
-  await page2.waitForSelector(".status_icon icon38_msg succ");
+  // await page2.waitForSelector(".status_icon icon38_msg");
 };
 
 // git登录
@@ -70,6 +70,5 @@ const gitLogin = async (page, browser) => {
   await page2.type("input[name=login]", gitName, { delay: 1 });
   await page2.type("input[name=password]", gitPw, { delay: 1 });
   await page2.click("input[name=commit]", { delay: 50 });
-
   // await page.waitFor(5000);
 };
